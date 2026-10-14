@@ -1,0 +1,63 @@
+{
+  "organisation": "Sample Bank Ltd. (synthetic test environment)",
+  "vendors": [
+    {
+      "id": "V01",
+      "name": "Northwind IT Services",
+      "service": "Loan application support",
+      "accounts": ["nw.support1", "nw.support2"],
+      "allowedSystems": ["vpn-gw-01", "loan-app-01"],
+      "allowedZones": ["vendor-zone", "app-zone"],
+      "allowedCountries": ["IN"],
+      "allowedHours": { "start": 9, "end": 19 },
+      "maxRole": "operator",
+      "accessWindow": { "from": "2026-10-01T00:00:00+05:30", "to": "2026-10-31T23:59:59+05:30" },
+      "active": true
+    },
+    {
+      "id": "V02",
+      "name": "BlueOrbit Digital",
+      "service": "Public website and CMS",
+      "accounts": ["bo.web1"],
+      "allowedSystems": ["cms-web-01"],
+      "allowedZones": ["dmz"],
+      "allowedCountries": ["IN"],
+      "allowedHours": { "start": 10, "end": 19 },
+      "maxRole": "operator",
+      "accessWindow": { "from": "2026-10-01T00:00:00+05:30", "to": "2026-12-31T23:59:59+05:30" },
+      "active": true
+    },
+    {
+      "id": "V03",
+      "name": "Kestrel Card Services",
+      "service": "Card transaction reconciliation",
+      "accounts": ["kc.recon1", "kc.recon2"],
+      "allowedSystems": ["vpn-gw-01", "card-recon-01", "partner-sftp"],
+      "allowedZones": ["vendor-zone", "app-zone", "external"],
+      "allowedCountries": ["IN", "SG"],
+      "allowedHours": { "start": 8, "end": 20 },
+      "maxRole": "operator",
+      "accessWindow": { "from": "2026-07-01T00:00:00+05:30", "to": "2027-06-30T23:59:59+05:30" },
+      "active": true
+    },
+    {
+      "id": "V04",
+      "name": "Meridian Payroll Tech",
+      "service": "Payroll migration (contract ended)",
+      "accounts": ["mp.ops1"],
+      "allowedSystems": ["hr-app-01"],
+      "allowedZones": ["app-zone"],
+      "allowedCountries": ["IN"],
+      "allowedHours": { "start": 9, "end": 18 },
+      "maxRole": "operator",
+      "accessWindow": { "from": "2026-06-01T00:00:00+05:30", "to": "2026-09-30T23:59:59+05:30" },
+      "active": false
+    }
+  ],
+  "settings": {
+    "largeTransferMB": 500,
+    "failedLoginThreshold": 3,
+    "failedLoginWindowMin": 10,
+    "massFileChangeThreshold": 200
+  }
+}

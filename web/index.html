@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VendorGuard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z' fill='%230f5e6b'/%3E%3Cpath d='m11 16 3.5 3.5L21 13' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z"/><path class="tick" d="m11 16 3.5 3.5L21 13"/></svg>
+    <div>
+      <h1>VendorGuard</h1>
+      <p>Third-party vendor access risk analyzer</p>
+    </div>
+  </div>
+  <div class="source">
+    <span id="sourceLabel" class="muted">Built-in sample log</span>
+    <button id="loadBtn" class="btn">Load log file…</button>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="overview" aria-selected="true">Overview</button>
+  <button role="tab" data-tab="alerts">Log analysis</button>
+  <button role="tab" data-tab="chain">Attack chain</button>
+  <button role="tab" data-tab="risk">Risk register</button>
+  <button role="tab" data-tab="about">About</button>
+</nav>
+
+<main>
+  <!-- OVERVIEW -->
+  <section id="tab-overview" class="tab">
+    <div id="headline" class="headline"></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="grid2">
+      <div class="card">
+        <h2>Attack-chain stages seen in the log</h2>
+        <ol class="strip" id="strip"></ol>
+        <p class="muted small">Stages follow the conceptual third-party ransomware path in the case study (section 5).</p>
+      </div>
+      <div class="card">
+        <h2>Accounts by risk</h2>
+        <div id="accountsMini"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALERTS -->
+  <section id="tab-alerts" class="tab" hidden>
+    <div class="toolbar">
+      <label>Severity
+        <select id="fSev"><option value="">All</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+      </label>
+      <label>Account <select id="fAcc"><option value="">All</option></select></label>
+      <label>Stage <select id="fStage"><option value="">All</option></select></label>
+      <span class="spacer"></span>
+      <span id="alertCount" class="muted"></span>
+      <button id="exportBtn" class="btn ghost">Export alerts (CSV)</button>
+    </div>
+    <div class="card flush">
+      <div class="tablewrap">
+        <table id="alertTable">
+          <thead><tr><th>Time</th><th>Severity</th><th>Stage</th><th>MITRE</th><th>Account</th><th>Alert</th><th>Controls that stop it</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Per-account verdict</h2>
+      <div class="tablewrap">
+        <table id="accTable">
+          <thead><tr><th>Account</th><th>Vendor</th><th class="num">Score</th><th class="num">Alerts</th><th>Stages</th><th>Verdict</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="warnings"></div>
+  </section>
+
+  <!-- CHAIN -->
+  <section id="tab-chain" class="tab" hidden>
+    <p class="lead">From one vendor login to encrypted systems. Each stage shows the MITRE ATT&amp;CK techniques, whether the loaded log shows it, the controls that break it, and the detection rules that catch it.</p>
+    <div id="chain" class="chain"></div>
+  </section>
+
+  <!-- RISK -->
+  <section id="tab-risk" class="tab" hidden>
+    <div class="grid-risk">
+      <div class="card">
+        <h2>Security controls</h2>
+        <p class="muted small">Tick a control to apply it. Each control lowers the likelihood or impact of the threats it addresses by one level.</p>
+        <div id="controls" class="controls"></div>
+        <div class="row gap">
+          <button id="allCtl" class="btn">Apply all</button>
+          <button id="noCtl" class="btn ghost">Clear</button>
+        </div>
+      </div>
+      <div>
+        <div class="tiles three" id="riskTiles"></div>
+        <div class="card flush">
+          <div class="tablewrap">
+            <table id="riskTable">
+              <thead><tr><th>Threat</th><th>MITRE</th><th>Likelihood</th><th>Impact</th><th>Inherent risk</th><th>Residual risk</th><th>Missing controls</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="muted small">Risk = Likelihood × Impact on a 1–4 scale (Low, Medium, High, Very High). Score 8–16 Critical, 5–7 High, 3–4 Medium, 1–2 Low. Inherent ratings reproduce the risk-assessment table in the report.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="tab-about" class="tab" hidden>
+    <div class="grid2">
+      <div class="card">
+        <h2>What this tool does</h2>
+        <p>VendorGuard turns the case study's methodology into something you can run. It reads a bank's third-party access log, checks every event against each vendor's access policy, and flags the behaviour the report says must be monitored.</p>
+        <table class="plain">
+          <thead><tr><th>Report step</th><th>Where it lives in the tool</th></tr></thead>
+          <tbody>
+            <tr><td>4 · Threat modelling</td><td>Attack chain tab: seven stages mapped to MITRE ATT&amp;CK</td></tr>
+            <tr><td>5 · Risk assessment</td><td>Risk register tab: Risk = Likelihood × Impact</td></tr>
+            <tr><td>6 · Control analysis</td><td>Control toggles and residual risk</td></tr>
+            <tr><td>7.6 · Continuous monitoring</td><td>Log analysis tab: 14 detection rules</td></tr>
+            <tr><td>Recommendations</td><td>Each alert names the controls that would stop it</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2>Detection rules</h2>
+        <table class="plain" id="rulesTable">
+          <thead><tr><th>Rule</th><th>Stage</th><th>Fires when</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2>Using your own data</h2>
+        <p>Click <b>Load log file…</b> and pick a CSV with these columns:</p>
+        <code class="block">timestamp,vendor_id,account,src_ip,country,action,target,zone,mfa,role,bytes_out,files_modified,result</code>
+        <p class="small muted">Actions: login, logout, privilege_change, account_enum, port_scan, remote_session, file_access, data_transfer, file_modify. You can also pick a vendors.json policy file in the same dialog.</p>
+        <p class="row gap"><a class="btn ghost" href="/api/sample/logs">Download sample log</a><a class="btn ghost" href="/api/sample/vendors">Download sample policy</a></p>
+      </div>
+      <div class="card">
+        <h2>About the data</h2>
+        <p>The built-in log is synthetic. It describes a fictional bank and fictional vendors, and includes one simulated vendor-account compromise so every rule can be demonstrated.</p>
+        <p>It does not describe ICICI Bank's systems. As the report explains, the January 2025 Bashe claim was not substantiated, and ICICI Bank reported no material cyber incident.</p>
+        <p class="small muted">Cyber Security case study · Group 4 · E&amp;TC, Symbiosis Institute of Technology, Pune · Faculty: Dr. Mangal Singh</p>
+        <p class="small muted" id="ver"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<dialog id="loadDlg">
+  <form method="dialog" id="loadForm">
+    <h2>Analyse your own log</h2>
+    <label class="file">Access log (CSV) <input type="file" id="logFile" accept=".csv,text/csv" required></label>
+    <label class="file">Vendor policy (JSON, optional) <input type="file" id="polFile" accept=".json,application/json"></label>
+    <p class="small muted">Without a policy file the sample vendor policy is used. Files are analysed locally and never leave this computer.</p>
+    <p id="loadErr" class="err" hidden></p>
+    <div class="row gap end">
+      <button value="cancel" class="btn ghost" formnovalidate>Cancel</button>
+      <button id="resetBtn" type="button" class="btn ghost">Back to sample</button>
+      <button id="runBtn" type="button" class="btn">Analyse</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>

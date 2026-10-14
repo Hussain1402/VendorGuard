@@ -1,0 +1,10 @@
+# Logs and exports created while testing
+*.log
+vendorguard_alerts.csv
+.DS_Store
+Thumbs.db
+
+# Binaries and build outputs
+bin/
+*.exe
+
